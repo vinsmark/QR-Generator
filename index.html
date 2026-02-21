@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> QR Generator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .card {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #1a73e8;
+            margin-bottom: 25px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 14px;
+            color: #5f6368;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #1a73e8;
+        }
+
+        #qrcode-container {
+            margin: 30px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 12px;
+            display: inline-block;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            min-height: 128px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+
+        #gen-btn {
+            background: #1a73e8;
+            color: white;
+        }
+
+        #gen-btn:hover {
+            background: #1557b0;
+        }
+
+        #download-btn {
+            background: #34a853;
+            color: white;
+            display: none;
+        }
+
+        #download-btn:hover {
+            background: #2d8a46;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <h2><i class="fas fa-magic"></i> QR Generator</h2>
+
+        <div class="input-group">
+            <label for="text-input">Enter Text or URL</label>
+            <input type="text" id="text-input" placeholder="e.g. https://google.com" autocomplete="off">
+        </div>
+
+        <div id="qrcode-container">
+            <div id="qrcode"></div>
+        </div>
+
+        <div class="actions">
+            <button id="gen-btn"><i class="fas fa-sync-alt"></i> Generate</button>
+            <button id="download-btn"><i class="fas fa-download"></i> Save Image</button>
+        </div>
+    </div>
+
+    <script>
+        const textInput = document.getElementById('text-input');
+        const genBtn = document.getElementById('gen-btn');
+        const downloadBtn = document.getElementById('download-btn');
+        const qrContainer = document.getElementById('qrcode');
+
+        let qrcode = new QRCode(qrContainer, {
+            width: 200,
+            height: 200,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+
+        function generateQR() {
+            const val = textInput.value.trim();
+            if (!val) {
+                alert("Please enter some text!");
+                return;
+            }
+
+            qrcode.clear();
+            qrcode.makeCode(val);
+
+            setTimeout(() => {
+                downloadBtn.style.display = "flex";
+            }, 100);
+        }
+
+        genBtn.onclick = generateQR;
+
+        textInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') generateQR();
+        });
+
+        downloadBtn.onclick = () => {
+            const img = qrContainer.querySelector('img');
+            if (img) {
+                const link = document.createElement('a');
+                link.href = img.src;
+                link.download = 'qrcode.png';
+                link.click();
+            }
+        };
+    </script>
+</body>
+
+</html>
